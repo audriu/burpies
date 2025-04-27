@@ -175,6 +175,3 @@ cython_debug/
 
 # datasets
 content/
-
-# best model
-best.pt
