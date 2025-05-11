@@ -9,7 +9,7 @@ def load_model(filename='best.pt', model_class=None):
 
     # Initialize the model
     global model_loaded
-    model_loaded = model_class(2)  # Replace with your model class
+    model_loaded = model_class(2)
 
     # Get the model's state_dict
     model_state_dict = model_loaded.state_dict()
@@ -33,7 +33,7 @@ from torchvision import transforms
 
 def predict_image_class(model, image_path):
     DEVICE = torch.device("mps" if torch.backends.mps.is_available() else "cuda" if torch.cuda.is_available() else "cpu")
-    print(f"Using device: {DEVICE}")
+    #print(f"Using device: {DEVICE}")
 
     preprocess = transforms.Compose([
         transforms.Resize(256),
@@ -53,9 +53,9 @@ def predict_image_class(model, image_path):
     # Perform inference
     with torch.no_grad():
         output = model(input_tensor)
-        print(f"output: {output}")
+        #print(f"output: {output}")
         probabilities = torch.softmax(output, dim=1)
-        print(f"probabilities: {probabilities}")
+        #print(f"probabilities: {probabilities}")
 
     # Get the predicted class and probability
     predicted_probability, predicted_class_index = torch.max(probabilities, dim=1)
