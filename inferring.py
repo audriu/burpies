@@ -21,10 +21,6 @@ def load_model(filename='best.pt', model_class=None):
     model_state_dict.update(filtered_checkpoint)
     model_loaded.load_state_dict(model_state_dict)
 
-    # Reinitialize the fc layer
-    torch.nn.init.xavier_uniform_(model_loaded.fc.weight)
-    torch.nn.init.zeros_(model_loaded.fc.bias)
-
     # Set the model to evaluation mode
     model_loaded.eval()
 
