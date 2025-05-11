@@ -72,3 +72,19 @@ def test_image(image_path):
     return predict_image_class(model_loaded, image_path)
 
 
+#Skaiciuojam kiek padarem burpiu
+number_of_burpies = 0
+previous_class = 1
+def count_burpies(predicted_class):
+    global number_of_burpies
+    global previous_class
+
+    if predicted_class == 1 and previous_class == 0:
+        number_of_burpies += 1
+    previous_class = predicted_class
+    return number_of_burpies
+
+def reset_counts():
+    global number_of_burpies, previous_class
+    number_of_burpies = 0
+    previous_class = 1
