@@ -1,36 +1,35 @@
-from models import BiTLikeModel
+model_loaded = None
 
-global model
-
-def load_model():
+def load_model(filename='best.pt', model_class=None):
     DEVICE = torch.device("mps" if torch.backends.mps.is_available() else "cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device-------------------: {DEVICE}")
 
     # Load the model checkpoint
-    checkpoint = torch.load('best.pt', map_location=torch.device(DEVICE))
+    checkpoint = torch.load(filename, map_location=torch.device(DEVICE))
 
     # Initialize the model
-    model = BiTLikeModel(2)  # Replace with your model class
+    global model_loaded
+    model_loaded = model_class(2)  # Replace with your model class
 
     # Get the model's state_dict
-    model_state_dict = model.state_dict()
+    model_state_dict = model_loaded.state_dict()
 
     # Filter out mismatched keys (e.g., fc layer)
     filtered_checkpoint = {k: v for k, v in checkpoint.items() if k in model_state_dict and model_state_dict[k].shape == v.shape}
 
     # Load the compatible weights
     model_state_dict.update(filtered_checkpoint)
-    model.load_state_dict(model_state_dict)
+    model_loaded.load_state_dict(model_state_dict)
 
     # Reinitialize the fc layer
-    torch.nn.init.xavier_uniform_(model.fc.weight)
-    torch.nn.init.zeros_(model.fc.bias)
+    torch.nn.init.xavier_uniform_(model_loaded.fc.weight)
+    torch.nn.init.zeros_(model_loaded.fc.bias)
 
     # Set the model to evaluation mode
-    model.eval()
+    model_loaded.eval()
 
     print("Model loaded successfully!")
-    return model
+    return model_loaded
 
 import torch
 from PIL import Image
@@ -71,9 +70,9 @@ def predict_image_class(model, image_path):
     return predicted_class, predicted_probability
 
 import os
-def test_image(model, image_path):
+def test_image(image_path):
     if not os.path.isfile(image_path):
         raise FileNotFoundError(f"Image file '{image_path}' not found.")
-    return predict_image_class(model, image_path)
+    return predict_image_class(model_loaded, image_path)
 
 
